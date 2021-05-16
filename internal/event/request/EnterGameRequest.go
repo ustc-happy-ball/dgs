@@ -14,14 +14,11 @@ type EnterGameRequest struct {
 	PlayerID   int32
 	Connect    info.ConnectInfo
 	PlayerName string
+	RoomID     int64
 }
 
-func NewEnterGameRequest(playerId int32, connectInfo info.ConnectInfo, name string) *EnterGameRequest {
-	return &EnterGameRequest{
-		PlayerID:   playerId,
-		Connect:    connectInfo,
-		PlayerName: name,
-	}
+func NewEnterGameRequest(playerID int32, connect info.ConnectInfo, playerName string, roomID int64) *EnterGameRequest {
+	return &EnterGameRequest{PlayerID: playerID, Connect: connect, PlayerName: playerName, RoomID: roomID}
 }
 
 func (e *EnterGameRequest) FromMessage(obj interface{}) {
@@ -33,6 +30,7 @@ func (e *EnterGameRequest) FromMessage(obj interface{}) {
 	info.FromMessage(infoMsg)
 	e.Connect = info
 	e.PlayerName = pbMsg.GetPlayerName()
+	e.RoomID = pbMsg.RoomId
 }
 
 func (e *EnterGameRequest) CopyFromMessage(obj interface{}) event.Event {
@@ -44,6 +42,7 @@ func (e *EnterGameRequest) CopyFromMessage(obj interface{}) event.Event {
 		PlayerID:   pbMsg.GetPlayerId(),
 		Connect:    info,
 		PlayerName: pbMsg.GetPlayerName(),
+		RoomID:     pbMsg.GetRoomId(),
 	}
 	req.SetCode(int32(pb.GAME_MSG_CODE_ENTER_GAME_REQUEST))
 	return req
@@ -58,6 +57,7 @@ func (e *EnterGameRequest) ToMessage() interface{} {
 		PlayerId:         e.PlayerID,
 		ClientConnectMsg: infoMsg,
 		PlayerName:       e.PlayerName,
+		RoomId:           e.RoomID,
 	}
 }
 

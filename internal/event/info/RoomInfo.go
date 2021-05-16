@@ -8,7 +8,7 @@ import (
 
 type RoomInfo struct {
 	framework.BaseEvent
-	ID           int32
+	ID           int64
 	Status       int32
 	CreateTime   int64
 	PlayerCount  int32

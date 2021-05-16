@@ -15,6 +15,7 @@ message EnterGameRequest {
   int32 playerId = 1; //玩家ID
   ConnectMsg clientConnectMsg = 2; //网络信息
   string playerName = 3; //玩家名称
+  int64 roomId = 4; //房间ID
 }
 
 message EntityInfoChangeRequest {
