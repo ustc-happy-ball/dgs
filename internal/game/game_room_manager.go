@@ -1,7 +1,6 @@
 package game
 
 import (
-	"fmt"
 	pb "dgs/api/proto"
 	"dgs/configs"
 	"dgs/framework"
@@ -11,6 +10,7 @@ import (
 	notify2 "dgs/internal/event/notify"
 	"dgs/internal/scheduler"
 	"dgs/model"
+	"fmt"
 	"github.com/golang/protobuf/proto"
 	"log"
 	"sync"
@@ -60,6 +60,22 @@ func (manager *GameRoomManager) Serv() {
 		atomic.AddInt32(&manager.waitedSessionNum, 1)
 		manager.waitedSessionMap.Store(session.Id, session)
 	}
+}
+
+func (manager *GameRoomManager) NewGameRoom() int64 {
+	newRoom := NewGameRoom()
+	manager.roomMap.Store(newRoom.ID, newRoom)
+	return newRoom.ID
+}
+
+func (manager *GameRoomManager) GetRoomList() []*GameRoom {
+	roomList := []*GameRoom{}
+	manager.roomMap.Range(func(key, value interface{}) bool {
+		room := value.(*GameRoom)
+		roomList = append(roomList, room)
+		return true
+	})
+	return roomList
 }
 
 // TODO 优化： CPU
