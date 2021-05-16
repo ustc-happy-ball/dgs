@@ -1,7 +1,6 @@
 package game
 
 import (
-	"fmt"
 	pb "dgs/api/proto"
 	"dgs/configs"
 	"dgs/framework"
@@ -9,8 +8,10 @@ import (
 	event2 "dgs/internal/event"
 	"dgs/internal/event/info"
 	notify2 "dgs/internal/event/notify"
+	"dgs/internal/event/request"
 	"dgs/internal/scheduler"
 	"dgs/model"
+	"fmt"
 	"github.com/golang/protobuf/proto"
 	"log"
 	"sync"
@@ -47,7 +48,8 @@ func NewGameRoomManager() *GameRoomManager {
 
 func (manager *GameRoomManager) Serv() {
 	log.Println("[GameRoomManager]游戏房间管理器开始监听新连接！")
-	go manager.waitForMatching()
+	//go manager.waitForMatching()
+	go manager.waitForEnterGame()
 	for {
 		conn, err := manager.server.Listen.AcceptKCP()
 		if err != nil {
@@ -62,58 +64,101 @@ func (manager *GameRoomManager) Serv() {
 	}
 }
 
-// TODO 优化： CPU
-// sync.Map 是线程安全的 map，可以一边遍历，一边删除
-func (manager *GameRoomManager) waitForMatching() {
-	log.Println("[GameRoomManager]游戏房间管理器开始轮询对等待匹配会话进行匹配!")
+func (manager *GameRoomManager) waitForEnterGame()  {
+	log.Println("[GameRoomManager]游戏房间管理器开始轮询对等待匹配会话进行进入房间处理!")
+	buf := make([]byte, 4096)
 	for {
 		manager.waitedSessionMap.Range(func(_, value interface{}) bool {
 			session := value.(*framework.BaseSession)
-			//1.达到匹配人数 或者 2.等待超时
-			if manager.waitedSessionNum >= configs.MinMatchingBatchSessionNum || manager.isWaitedSessionOvertime(session) {
-				//选择一个适合的房间，将新会话放入房间的未注册会话集合中
-				room, err := manager.matchingSessionToRoom(session)
-				if nil != err {
-					log.Println("[GameRoomManager]匹配新会话至房间时出错！")
-				}
-				room.AcceptConnector(session)
-				manager.waitedSessionMap.Delete(session.Id)
-				atomic.AddInt32(&manager.waitedSessionNum, -1)
+			//给session加一个读超时函数，及时释放锁
+			err := session.Sess.SetReadDeadline(time.Now().Add(time.Millisecond * time.Duration(2)))
+			if err != nil {
+				panic("setDeadLine出错")
 			}
+			num, _ := session.Sess.Read(buf)
+			if num == 0 {
+				return true
+			}
+			session.UpdateTime()
+			pbMsg := &pb.GMessage{}
+			proto.Unmarshal(buf[:num], pbMsg)
+			msg := event2.GMessage{}
+			m := msg.CopyFromMessage(pbMsg)
+			if m.GetCode() != int32(pb.GAME_MSG_CODE_ENTER_GAME_REQUEST) {
+				fmt.Printf("[GameRoomManager]进入对局时收到非法请求！\n")
+				return true
+			}
+			//开始进行进入世界处理
+			enterGameReq := m.(*event2.GMessage).Data.(*request.EnterGameRequest)
+			//绑定会话至玩家
+			roomId := enterGameReq.RoomID
+			room := manager.FetchGameRoom(roomId)
+			if nil == room {
+				fmt.Printf("[GameRoomManager]进入对局时未找到该房间！检查玩家上送roomID是否合法！roomID:%v\n", roomId)
+				return true
+			}
+			//下放玩家至该房间
+			fmt.Printf("[GameRoomManager]将玩家分派到房间成功！playerID:%v, room:%+v\n", enterGameReq.PlayerID, room)
+			room.OnEnterGame(m.(*event2.GMessage), session)
+			manager.waitedSessionMap.Delete(session.Id)
+			atomic.AddInt32(&manager.waitedSessionNum, -1)
 			return true
 		})
 	}
 }
 
-func (manager *GameRoomManager) isWaitedSessionOvertime(session *framework.BaseSession) bool {
-	nowTime := time.Now().UnixNano()
-	res := (nowTime-session.CreationTime)/1e9 >= configs.MatchingWaitOverTime
-	return res
-}
-
-func (manager *GameRoomManager) matchingSessionToRoom(session *framework.BaseSession) (*GameRoom, error) {
-	//1.满足房间人数限制要求
-	//2.满足房间中的最高分限制要求（最高分不超过游戏胜利分数的30%）
-	var targetRoom *GameRoom
-	manager.roomMap.Range(func(_, value interface{}) bool {
-		room := value.(*GameRoom)
-		if room.AliveHeroNum < configs.GameAliveHeroLimit {
-			targetRoom = room
-			return true
-		}
-		return true
-	})
-	//3.若没有找到上述的房间，则新创建一个房间
-	if nil == targetRoom {
-		log.Printf("[GameRoomManager]匹配会话时未找到合适的对局，新建一个新的对局！")
-		targetRoom = NewGameRoom()
-		go targetRoom.Serv()
-		manager.roomMap.Store(targetRoom.ID, targetRoom)
-	}
-	log.Printf("[GameRoomManager]会话匹配成功！session：%v, room: %v \n", session, targetRoom)
-
-	return targetRoom, nil
-}
+// TODO 优化： CPU
+// sync.Map 是线程安全的 map，可以一边遍历，一边删除
+//func (manager *GameRoomManager) waitForMatching() {
+//	log.Println("[GameRoomManager]游戏房间管理器开始轮询对等待匹配会话进行匹配!")
+//	for {
+//		manager.waitedSessionMap.Range(func(_, value interface{}) bool {
+//			session := value.(*framework.BaseSession)
+//			//1.达到匹配人数 或者 2.等待超时
+//			if manager.waitedSessionNum >= configs.MinMatchingBatchSessionNum || manager.isWaitedSessionOvertime(session) {
+//				//选择一个适合的房间，将新会话放入房间的未注册会话集合中
+//				room, err := manager.matchingSessionToRoom(session)
+//				if nil != err {
+//					log.Println("[GameRoomManager]匹配新会话至房间时出错！")
+//				}
+//				room.AcceptConnector(session)
+//				manager.waitedSessionMap.Delete(session.Id)
+//				atomic.AddInt32(&manager.waitedSessionNum, -1)
+//			}
+//			return true
+//		})
+//	}
+//}
+//
+//func (manager *GameRoomManager) isWaitedSessionOvertime(session *framework.BaseSession) bool {
+//	nowTime := time.Now().UnixNano()
+//	res := (nowTime-session.CreationTime)/1e9 >= configs.MatchingWaitOverTime
+//	return res
+//}
+//
+//func (manager *GameRoomManager) matchingSessionToRoom(session *framework.BaseSession) (*GameRoom, error) {
+//	//1.满足房间人数限制要求
+//	//2.满足房间中的最高分限制要求（最高分不超过游戏胜利分数的30%）
+//	var targetRoom *GameRoom
+//	manager.roomMap.Range(func(_, value interface{}) bool {
+//		room := value.(*GameRoom)
+//		if room.AliveHeroNum < configs.GameAliveHeroLimit {
+//			targetRoom = room
+//			return true
+//		}
+//		return true
+//	})
+//	//3.若没有找到上述的房间，则新创建一个房间
+//	if nil == targetRoom {
+//		log.Printf("[GameRoomManager]匹配会话时未找到合适的对局，新建一个新的对局！")
+//		targetRoom = NewGameRoom()
+//		go targetRoom.Serv()
+//		manager.roomMap.Store(targetRoom.ID, targetRoom)
+//	}
+//	log.Printf("[GameRoomManager]会话匹配成功！session：%v, room: %v \n", session, targetRoom)
+//
+//	return targetRoom, nil
+//}
 
 // Cron initialize timer for GameRoomManager. It will broadcast props/food info of each room to its clients.
 func GlobalInfoNotify() {

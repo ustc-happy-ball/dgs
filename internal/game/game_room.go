@@ -1,8 +1,6 @@
 package game
 
 import (
-	"errors"
-	"fmt"
 	pb "dgs/api/proto"
 	"dgs/configs"
 	"dgs/framework"
@@ -16,6 +14,8 @@ import (
 	"dgs/internal/prop"
 	"dgs/model"
 	"dgs/tools"
+	"errors"
+	"fmt"
 	"github.com/golang/protobuf/proto"
 	"log"
 	"sync"
@@ -28,7 +28,7 @@ type GameRoom struct {
 	ID int64
 	//addr             string
 	//server           *kcpnet.KcpServer
-	acceptedSessions sync.Map
+	//acceptedSessions sync.Map
 	sessions         sync.Map //map[interface{}]*framework.BaseSession
 	dispatcher       event.EventDispatcher
 	Heroes           sync.Map
@@ -99,9 +99,9 @@ func (g *GameRoom) RegisterConnector(c *framework.BaseSession) error {
 
 // @title    AcceptConnector
 // @description 接收GameRoomManager下方的新会话
-func (g *GameRoom) AcceptConnector(session *framework.BaseSession) {
-	g.acceptedSessions.Store(session.Id, session)
-}
+//func (g *GameRoom) AcceptConnector(session *framework.BaseSession) {
+//	g.acceptedSessions.Store(session.Id, session)
+//}
 
 func (g *GameRoom) FetchConnector(sessionId int32) *framework.BaseSession {
 	sess, ok := g.sessions.Load(sessionId)
@@ -119,7 +119,6 @@ func (g *GameRoom) DeleteConnector(c *framework.BaseSession) error {
 // Serv
 // @description   游戏服务主方法（负责处理：1.接受连接创建会话 2.监听已接收但还未注册的会话，接收到进入世界请求时注册会话 3.监听已注册会话，投递网络消息包至消息队列中）
 func (g *GameRoom) Serv() error {
-	go g.HandleSessions()       //开启会话监听线程，监听session集合中的读事件，将读到的GMessage放入环形队列中
 	go g.HandleEventFromQueue() //开启消费线程，从环形队列中读取GMessage消息并处理
 	go g.UpdateHeros()          // 更新hero的信息（位置、状态等）
 	go g.PeriodicalInitProps()  // 定期生成新的道具
@@ -140,7 +139,8 @@ func (g *GameRoom) Serv() error {
 		case <- g.die:
 			return nil
 		default:
-			g.registerSessions() //处理会话注册流程（等待玩家进入世界enterWorld）
+			//g.registerSessions() //处理会话注册流程（等待玩家进入世界enterWorld）
+			g.HandleSessions()       //监听session集合中的读事件，将读到的GMessage放入环形队列中
 		}
 	}
 
@@ -150,39 +150,39 @@ func (g *GameRoom) Serv() error {
 // TODO 优化：内存分配以及 Range，移动 buf 的位置
 // @title    registerSessions
 // @description 监听已接收但还未注册的会话，接收到进入世界请求时注册会话
-func (g *GameRoom) registerSessions() {
-	buf := make([]byte, 4096) // TODO 待优化
-	g.acceptedSessions.Range(func(_, v interface{}) bool {
-		session := v.(*framework.BaseSession)
-		err := session.Sess.SetReadDeadline(time.Now().Add(time.Millisecond * time.Duration(2)))
-		if err != nil {
-			panic("setDeadLine出错")
-		}
-		num, _ := session.Sess.Read(buf)
-		if num == 0 {
-			return true
-		}
-		session.UpdateTime()
-		pbMsg := &pb.GMessage{}
-		proto.Unmarshal(buf, pbMsg)
-		//log.Printf("Receive data: %+v", pbMsg)
-		msg := event2.GMessage{}
-		msg.SetRoomId(g.ID)
-		m := msg.CopyFromMessage(pbMsg)
-		m.SetRoomId(g.ID)
-		if m.GetCode() == int32(pb.GAME_MSG_CODE_ENTER_GAME_REQUEST) {
-			// 将该session移出未注册会话集合
-			g.acceptedSessions.Delete(session.Id)
-			// 进入世界处理，将session放入已注册会话集合
-			g.onEnterGame(m.(*event2.GMessage), session)
-		}
-		//buf清零
-		for i := range buf {
-			buf[i] = 0
-		}
-		return true
-	})
-}
+//func (g *GameRoom) registerSessions() {
+//	buf := make([]byte, 4096) // TODO 待优化
+//	g.acceptedSessions.Range(func(_, v interface{}) bool {
+//		session := v.(*framework.BaseSession)
+//		err := session.Sess.SetReadDeadline(time.Now().Add(time.Millisecond * time.Duration(2)))
+//		if err != nil {
+//			panic("setDeadLine出错")
+//		}
+//		num, _ := session.Sess.Read(buf)
+//		if num == 0 {
+//			return true
+//		}
+//		session.UpdateTime()
+//		pbMsg := &pb.GMessage{}
+//		proto.Unmarshal(buf, pbMsg)
+//		//log.Printf("Receive data: %+v", pbMsg)
+//		msg := event2.GMessage{}
+//		msg.SetRoomId(g.ID)
+//		m := msg.CopyFromMessage(pbMsg)
+//		m.SetRoomId(g.ID)
+//		if m.GetCode() == int32(pb.GAME_MSG_CODE_ENTER_GAME_REQUEST) {
+//			// 将该session移出未注册会话集合
+//			g.acceptedSessions.Delete(session.Id)
+//			// 进入世界处理，将session放入已注册会话集合
+//			g.OnEnterGame(m.(*event2.GMessage), session)
+//		}
+//		//buf清零
+//		for i := range buf {
+//			buf[i] = 0
+//		}
+//		return true
+//	})
+//}
 
 // @title    registerSessions
 // @description 监听已接收但还未注册的会话，接收到进入世界请求时注册会话
@@ -321,7 +321,7 @@ func (g *GameRoom) GetItemsNearby(hero *model.Hero) ([]*model.Hero, []*model.Pro
 	return heros, props
 }
 
-func (g *GameRoom) onEnterGame(e *event2.GMessage, s *framework.BaseSession) {
+func (g *GameRoom) OnEnterGame(e *event2.GMessage, s *framework.BaseSession) {
 	enterGameReq := e.Data.(*request.EnterGameRequest)
 	s.Id = enterGameReq.PlayerID
 	log.Printf("[GameRoom]玩家进入房间！session：%v, room: %v", s, g)
