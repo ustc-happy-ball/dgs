@@ -1,14 +1,14 @@
 package event
 
 import (
-	pb "github.com/LILILIhuahuahua/ustc_tencent_game/api/proto"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/configs"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/framework"
-	e "github.com/LILILIhuahuahua/ustc_tencent_game/framework/event"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/internal/event/notify"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/internal/event/request"
-	response2 "github.com/LILILIhuahuahua/ustc_tencent_game/internal/event/response"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/tools"
+	pb "dgs/api/proto"
+	"dgs/configs"
+	"dgs/framework"
+	e "dgs/framework/event"
+	"dgs/internal/event/notify"
+	"dgs/internal/event/request"
+	response2 "dgs/internal/event/response"
+	"dgs/tools"
 	"log"
 )
 

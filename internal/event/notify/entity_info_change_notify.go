@@ -1,12 +1,12 @@
 package notify
 
 import (
-	//pb "github.com/LILILIhuahuahua/ustc_tencent_game/api/proto"
-	pb "github.com/LILILIhuahuahua/ustc_tencent_game/api/proto"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/framework"
-	e "github.com/LILILIhuahuahua/ustc_tencent_game/framework/event"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/internal/event/info"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/tools"
+	//pb "dgs/api/proto"
+	pb "dgs/api/proto"
+	"dgs/framework"
+	e "dgs/framework/event"
+	"dgs/internal/event/info"
+	"dgs/tools"
 	"github.com/golang/protobuf/proto"
 )
 

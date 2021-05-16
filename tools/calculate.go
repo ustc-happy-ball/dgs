@@ -1,7 +1,7 @@
 package tools
 
 import (
-	"github.com/LILILIhuahuahua/ustc_tencent_game/configs"
+	"dgs/configs"
 	"math"
 )
 

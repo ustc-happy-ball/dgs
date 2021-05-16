@@ -1,6 +1,8 @@
 package configs
 
-import "github.com/LILILIhuahuahua/ustc_tencent_game/api/proto"
+import (
+	proto "dgs/api/proto"
+)
 
 const (
 	// msg消息类型

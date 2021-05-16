@@ -1,9 +1,9 @@
 package aoi
 
 import (
-	"github.com/LILILIhuahuahua/ustc_tencent_game/framework"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/model"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/tools"
+	"dgs/framework"
+	"dgs/model"
+	"dgs/tools"
 	"sync"
 )
 

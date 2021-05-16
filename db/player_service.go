@@ -2,7 +2,7 @@ package db
 
 import (
 	"context"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/db/databaseGrpc"
+	"dgs/db/databaseGrpc"
 	"time"
 )
 

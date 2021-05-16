@@ -1,10 +1,10 @@
 package info
 
 import (
-	pb "github.com/LILILIhuahuahua/ustc_tencent_game/api/proto"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/framework"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/framework/event"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/model"
+	pb "dgs/api/proto"
+	"dgs/framework"
+	"dgs/framework/event"
+	"dgs/model"
 )
 
 type HeroInfo struct {

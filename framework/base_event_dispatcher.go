@@ -1,6 +1,6 @@
 package framework
 
-import "github.com/LILILIhuahuahua/ustc_tencent_game/framework/event"
+import "dgs/framework/event"
 
 type BaseEventDispatcher struct {
 	maxEventSize int32

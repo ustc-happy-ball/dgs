@@ -2,8 +2,8 @@ package test
 
 import (
 	"fmt"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/framework/event"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/internal/event/notify"
+	"dgs/framework/event"
+	"dgs/internal/event/notify"
 	"testing"
 )
 

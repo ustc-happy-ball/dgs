@@ -2,11 +2,11 @@ package test
 
 import (
 	"fmt"
-	pb "github.com/LILILIhuahuahua/ustc_tencent_game/api/proto"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/configs"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/internal/event"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/internal/event/info"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/internal/event/request"
+	pb "dgs/api/proto"
+	"dgs/configs"
+	"dgs/internal/event"
+	"dgs/internal/event/info"
+	"dgs/internal/event/request"
 	"github.com/golang/protobuf/proto"
 	"github.com/xtaci/kcp-go"
 	"io"

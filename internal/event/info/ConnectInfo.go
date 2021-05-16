@@ -1,9 +1,9 @@
 package info
 
 import (
-	pb "github.com/LILILIhuahuahua/ustc_tencent_game/api/proto"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/framework"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/framework/event"
+	pb "dgs/api/proto"
+	"dgs/framework"
+	"dgs/framework/event"
 )
 
 type ConnectInfo struct {

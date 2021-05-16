@@ -1,8 +1,8 @@
 package framework
 
 import (
-	"github.com/LILILIhuahuahua/ustc_tencent_game/framework/event"
-	//event2 "github.com/LILILIhuahuahua/ustc_tencent_game/internal/event"
+	"dgs/framework/event"
+	//event2 "dgs/internal/event"
 )
 
 var EVENT_HANDLER = &BaseEventHandler{}

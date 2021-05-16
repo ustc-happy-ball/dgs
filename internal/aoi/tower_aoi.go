@@ -1,6 +1,6 @@
 package aoi
 
-import "github.com/LILILIhuahuahua/ustc_tencent_game/configs"
+import "dgs/configs"
 
 func InitTowers() []*Tower {
 	var towers []*Tower

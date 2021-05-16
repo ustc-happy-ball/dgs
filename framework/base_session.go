@@ -2,8 +2,8 @@ package framework
 
 import (
 	"errors"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/configs"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/tools"
+	"dgs/configs"
+	"dgs/tools"
 	"github.com/xtaci/kcp-go"
 	"sync"
 	"time"

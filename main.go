@@ -1,10 +1,10 @@
 package main
 
 import (
+	"dgs/configs"
+	"dgs/db"
+	"dgs/internal/game"
 	"flag"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/configs"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/db"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/internal/game"
 	"log"
 	_ "net/http/pprof"
 	"runtime"

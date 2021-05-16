@@ -1,10 +1,10 @@
 package response
 
 import (
-	pb "github.com/LILILIhuahuahua/ustc_tencent_game/api/proto"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/framework"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/framework/event"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/tools"
+	pb "dgs/api/proto"
+	"dgs/framework"
+	"dgs/framework/event"
+	"dgs/tools"
 	"github.com/golang/protobuf/proto"
 )
 

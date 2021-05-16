@@ -2,11 +2,11 @@ package game
 
 import (
 	"fmt"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/configs"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/internal/aoi"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/internal/event/info"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/model"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/tools"
+	"dgs/configs"
+	"dgs/internal/aoi"
+	"dgs/internal/event/info"
+	"dgs/model"
+	"dgs/tools"
 )
 
 func (gameRoom *GameRoom) NotifyHeroView(changeHero *model.Hero, notifyType int32, tower *aoi.Tower) {

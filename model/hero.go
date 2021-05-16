@@ -1,9 +1,9 @@
 package model
 
 import (
-	"github.com/LILILIhuahuahua/ustc_tencent_game/configs"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/framework"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/tools"
+	"dgs/configs"
+	"dgs/framework"
+	"dgs/tools"
 	"log"
 	"sync"
 	"time"

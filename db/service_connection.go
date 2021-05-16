@@ -3,7 +3,7 @@ package db
 import (
 	"context"
 	"errors"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/db/databaseGrpc"
+	"dgs/db/databaseGrpc"
 	"google.golang.org/grpc"
 	"log"
 	"time"

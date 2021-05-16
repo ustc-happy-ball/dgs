@@ -2,8 +2,8 @@ package test
 
 import (
 	"fmt"
-	pb "github.com/LILILIhuahuahua/ustc_tencent_game/api/proto"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/configs"
+	pb "dgs/api/proto"
+	"dgs/configs"
 	"github.com/golang/protobuf/proto"
 	"github.com/xtaci/kcp-go"
 	"log"

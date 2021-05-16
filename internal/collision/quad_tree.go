@@ -3,7 +3,7 @@ package collision
 import (
 	"container/list"
 	"fmt"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/configs"
+	"dgs/configs"
 	"math"
 )
 

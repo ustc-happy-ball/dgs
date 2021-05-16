@@ -1,10 +1,10 @@
 package game
 
 import (
+	"dgs/configs"
+	"dgs/framework"
+	"dgs/model"
 	"fmt"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/configs"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/framework"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/model"
 )
 
 func (g *GameRoom) DeleteUnavailableSession() error {

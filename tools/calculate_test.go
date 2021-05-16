@@ -2,7 +2,7 @@ package tools
 
 import (
 	"fmt"
-	"github.com/LILILIhuahuahua/ustc_tencent_game/configs"
+	"dgs/configs"
 	"math"
 	"testing"
 )
