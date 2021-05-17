@@ -35,6 +35,11 @@ spec:
           ports:
             - containerPort: 8888
               protocol: UDP
+      imagePullSecrets:
+        - name: regcred
+      restartPolicy: Always
+      nodeSelector:
+        environment: dev
 #        - name: nginx
 #          image: k8s.gcr.io/nginx-slim:0.8
 #          ports:
