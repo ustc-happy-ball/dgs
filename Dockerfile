@@ -11,8 +11,8 @@ RUN go build -o dgs main.go
 FROM alpine:latest
 ARG DB_HOST
 ARG DB_PORT
-ENV ENV_HOST=$DB_HOST
-ENV ENV_PORT=$DB_PORT
+ENV ENV_HOST=$DB_HOST \
+    ENV_PORT=$DB_PORT
 WORKDIR  /root/go/src/github.com/LILILIhuahuahua/ustc_tencent_game
 COPY --from=builder  /root/go/src/dgs/dgs .
 EXPOSE 8888/udp
