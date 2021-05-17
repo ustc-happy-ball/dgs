@@ -16,7 +16,7 @@ type RoomInfo struct {
 }
 
 func (r RoomInfo) ToMessage() interface{} {
-	return matchGrpc.RoomMsg{
+	return &matchGrpc.RoomMsg{
 		Id: r.ID,
 		Status: r.Status,
 		CreateTime: r.CreateTime,
