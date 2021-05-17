@@ -7,8 +7,8 @@ metadata:
 #  labels:
 #    stage: test
 spec:
-  type: LoadBalancer
-  externalTrafficPolicy: Cluster
+  type: NodePort
+  externalTrafficPolicy: Local
 #  sessionAffinity: ClientIP
   ports:
     - port: 32001
