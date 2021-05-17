@@ -33,7 +33,7 @@ func main() {
 	}
 	log.Println("Initialize DBProxyAddr to", configs.DBProxyAddr)
 	go db.InitConnection(configs.DBProxyAddr)
-	go initGrpcServer()
+	// go initGrpcServer()
 	n := runtime.NumCPU()
 	runtime.GOMAXPROCS(n)
 
