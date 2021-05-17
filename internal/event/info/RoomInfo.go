@@ -1,9 +1,9 @@
 package info
 
 import (
-	pb "dgs/api/proto"
 	"dgs/framework"
 	"dgs/framework/event"
+	"dgs/match/matchGrpc"
 )
 
 type RoomInfo struct {
@@ -16,7 +16,7 @@ type RoomInfo struct {
 }
 
 func (r RoomInfo) ToMessage() interface{} {
-	return &pb.RoomMsg{
+	return matchGrpc.RoomMsg{
 		Id: r.ID,
 		Status: r.Status,
 		CreateTime: r.CreateTime,
@@ -26,7 +26,7 @@ func (r RoomInfo) ToMessage() interface{} {
 }
 
 func (r RoomInfo) FromMessage(obj interface{}) {
-	pbMsg := obj.(*pb.RoomMsg)
+	pbMsg := obj.(*matchGrpc.RoomMsg)
 	r.ID = pbMsg.Id
 	r.Status = pbMsg.Status
 	r.CreateTime = pbMsg.CreateTime
@@ -35,7 +35,7 @@ func (r RoomInfo) FromMessage(obj interface{}) {
 }
 
 func (r RoomInfo) CopyFromMessage(obj interface{}) event.Event {
-	pbMsg := obj.(*pb.RoomMsg)
+	pbMsg := obj.(*matchGrpc.RoomMsg)
 	return &RoomInfo{
 		ID: pbMsg.Id,
 		Status: pbMsg.Status,

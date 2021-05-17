@@ -71,6 +71,27 @@ func NewGameRoom() *GameRoom {
 	return gameroom
 }
 
+func (g *GameRoom) ToInfo() *info.RoomInfo {
+	var playerCount int32
+	highestScore := int32(0)
+	g.Heroes.Range(func(key, value interface{}) bool {
+		hero := value.(*model.Hero)
+		if highestScore < hero.Score {
+			highestScore = hero.Score
+		}
+		playerCount++
+		return true
+	})
+	roomInfo := &info.RoomInfo{
+		ID:           g.ID,
+		Status:       g.gameOver,
+		CreateTime:   0,
+		PlayerCount:  playerCount,
+		HighestScore: highestScore,
+	}
+	return roomInfo
+}
+
 func (g *GameRoom) GetRoomID() int64 {
 	return g.ID
 }

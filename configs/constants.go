@@ -42,6 +42,7 @@ var (
 	// Server info
 	ServerAddr              = "0.0.0.0:8888"
 	MaxEventQueueSize int32 = 500
+	TcpPort                 = ":9000"
 
 	// RemoteCLB is LoadBalancer address used for dgs
 	RemoteCLB = "150.158.216.120:32001"
