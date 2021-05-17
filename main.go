@@ -3,6 +3,8 @@ package main
 import (
 	"dgs/configs"
 	"dgs/db"
+
+	//"dgs/db"
 	"dgs/internal/game"
 	"dgs/match/matchGrpc"
 	"dgs/match/matchService"
@@ -33,7 +35,7 @@ func main() {
 	}
 	log.Println("Initialize DBProxyAddr to", configs.DBProxyAddr)
 	go db.InitConnection(configs.DBProxyAddr)
-	// go initGrpcServer()
+	go initGrpcServer()
 	n := runtime.NumCPU()
 	runtime.GOMAXPROCS(n)
 
