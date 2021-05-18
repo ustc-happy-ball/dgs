@@ -115,8 +115,8 @@ func (manager *GameRoomManager) waitForEnterGame()  {
 			}
 			//下放玩家至该房间
 			fmt.Printf("[GameRoomManager]将玩家分派到房间成功！playerID:%v, room:%+v\n", enterGameReq.PlayerID, room)
-			room.OnEnterGame(m.(*event2.GMessage), session)
 			manager.waitedSessionMap.Delete(session.Id)
+			room.OnEnterGame(m.(*event2.GMessage), session)
 			atomic.AddInt32(&manager.waitedSessionNum, -1)
 			return true
 		})
