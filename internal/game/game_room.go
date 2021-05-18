@@ -68,6 +68,8 @@ func NewGameRoom() *GameRoom {
 	}
 	gameroom.AdjustPropsIntoTower(roomInitProps)
 	log.Printf("[GameRoom]初始化新对局！GameRoom：%v \n", gameroom)
+	//启动房间服务
+	gameroom.Serv()
 	return gameroom
 }
 
