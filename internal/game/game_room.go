@@ -723,6 +723,13 @@ func (room *GameRoom) onCollision() {
 						break
 					case int32(pb.ENTITY_TYPE_PROP_TYPE_SIZE_DOWN):
 						eater.Score /= 2
+						//更新排行榜
+						heroRankInfo := info.NewHeroRankInfo(eater)
+						room.heroRankHeap.ChallengeRank(heroRankInfo)
+						//发出排行榜变动推送
+						rankInfos := room.heroRankHeap.GetSortedHeroRankInfos()
+						rankNotify := notify2.NewGameRankListNotify(rankInfos)
+						GAME_ROOM_MANAGER.Braodcast(room.ID, rankNotify.ToGMessageBytes())
 						eater.Size /= 2
 						if eater.Size < configs.HeroSizeDownLimit {
 							eater.Size = configs.HeroSizeDownLimit
