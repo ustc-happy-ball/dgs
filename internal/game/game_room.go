@@ -768,8 +768,11 @@ func (room *GameRoom) onGameOver() {
 	if room.gameOver == 0 {
 		close(room.die)
 	}
-	atomic.AddInt32(&room.gameOver, 1) // 发通知，告诉 goroutine 游戏结束
-	time.Sleep(2 * time.Second)        //  在清理对局资源之前，等待一定时间让对局内其他任务完成
 	GAME_ROOM_MANAGER.DeleteGameRoom(room.ID)
+	atomic.AddInt32(&room.gameOver, 1) // 发通知，告诉 goroutine 游戏结束
+	time.Sleep(1 * time.Second)        //  在清理对局资源之前，等待一定时间让对局内其他任务完成
+
+	room.quadTree.Clear()
+	room.dispatcher.Close()
 	//runtime.GC()
 }
