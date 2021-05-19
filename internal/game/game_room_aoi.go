@@ -1,12 +1,12 @@
 package game
 
 import (
-	"fmt"
 	"dgs/configs"
 	"dgs/internal/aoi"
 	"dgs/internal/event/info"
 	"dgs/model"
 	"dgs/tools"
+	"fmt"
 )
 
 func (gameRoom *GameRoom) NotifyHeroView(changeHero *model.Hero, notifyType int32, tower *aoi.Tower) {

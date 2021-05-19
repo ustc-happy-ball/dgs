@@ -1,7 +1,6 @@
 package game
 
 import (
-	"fmt"
 	pb "dgs/api/proto"
 	"dgs/configs"
 	"dgs/framework"
@@ -9,6 +8,7 @@ import (
 	"dgs/internal/event/info"
 	"dgs/internal/event/notify"
 	"dgs/model"
+	"fmt"
 	"github.com/golang/protobuf/proto"
 	"log"
 )

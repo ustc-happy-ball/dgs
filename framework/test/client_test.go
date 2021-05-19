@@ -1,12 +1,12 @@
 package test
 
 import (
-	"fmt"
 	pb "dgs/api/proto"
 	"dgs/configs"
 	"dgs/internal/event"
 	"dgs/internal/event/info"
 	"dgs/internal/event/request"
+	"fmt"
 	"github.com/golang/protobuf/proto"
 	"github.com/xtaci/kcp-go"
 	"io"

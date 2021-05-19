@@ -1,9 +1,9 @@
 package test
 
 import (
-	"fmt"
 	"dgs/framework/event"
 	"dgs/internal/event/notify"
+	"fmt"
 	"testing"
 )
 

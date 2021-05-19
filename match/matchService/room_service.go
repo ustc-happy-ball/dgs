@@ -10,7 +10,6 @@ type roomGrpcServer struct {
 	matchGrpc.UnimplementedRoomServiceServer
 }
 
-
 func GetRoomServer() *roomGrpcServer {
 	return &roomGrpcServer{}
 }

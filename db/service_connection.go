@@ -2,8 +2,8 @@ package db
 
 import (
 	"context"
-	"errors"
 	"dgs/db/databaseGrpc"
+	"errors"
 	"google.golang.org/grpc"
 	"log"
 	"time"

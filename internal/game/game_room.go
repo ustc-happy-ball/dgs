@@ -29,17 +29,17 @@ type GameRoom struct {
 	//addr             string
 	//server           *kcpnet.KcpServer
 	//acceptedSessions sync.Map
-	sessions         sync.Map //map[interface{}]*framework.BaseSession
-	dispatcher       event.EventDispatcher
-	Heroes           sync.Map
-	SessionHeroMap   sync.Map //map[sessionId] *model.Hero
-	props            *prop.PropsManger
-	towers           []*aoi.Tower
-	quadTree         *collision.QuadTree //对局内四叉树，用于进行碰撞检测
-	heroRankHeap     *GameRankHeap
-	gameOver         int32 // 如果 gameOver 为 0，则表示对局仍在继续，当设置为 1 时，表示对局已经结束，此时回收线程
-	die				chan struct{}
-	AliveHeroNum     int32
+	sessions       sync.Map //map[interface{}]*framework.BaseSession
+	dispatcher     event.EventDispatcher
+	Heroes         sync.Map
+	SessionHeroMap sync.Map //map[sessionId] *model.Hero
+	props          *prop.PropsManger
+	towers         []*aoi.Tower
+	quadTree       *collision.QuadTree //对局内四叉树，用于进行碰撞检测
+	heroRankHeap   *GameRankHeap
+	gameOver       int32 // 如果 gameOver 为 0，则表示对局仍在继续，当设置为 1 时，表示对局已经结束，此时回收线程
+	die            chan struct{}
+	AliveHeroNum   int32
 }
 
 //数据持有；连接者指针列表
@@ -58,8 +58,8 @@ func NewGameRoom() *GameRoom {
 		quadTree:     collision.NewQuadTree("0", 0, collision.NewRectangleByBounds(configs.MapMinX, configs.MapMinY, configs.MapMaxX, configs.MapMaxY)),
 		heroRankHeap: NewGameRankHeap(configs.HeroRankListLength),
 		//Heroes: make(map[int32]*model.Hero),
-		gameOver: 0,
-		die: make(chan struct{}),
+		gameOver:     0,
+		die:          make(chan struct{}),
 		AliveHeroNum: 0,
 	}
 	roomInitProps, err := gameroom.props.GetProps()
@@ -147,7 +147,7 @@ func (g *GameRoom) Serv() error {
 	go g.PeriodicalInitProps()  // 定期生成新的道具
 
 	//TODO 优化：CPU 保护，GC 优化
-	for  {
+	for {
 		//conn, err := g.server.Listen.AcceptKCP()
 		//if err != nil {
 		//	return err
@@ -159,11 +159,11 @@ func (g *GameRoom) Serv() error {
 		//}
 		//g.acceptedSessions.Store(session.Id, session) //将新会话放入未注册会话集合中
 		select {
-		case <- g.die:
+		case <-g.die:
 			return nil
 		default:
 			//g.registerSessions() //处理会话注册流程（等待玩家进入世界enterWorld）
-			g.HandleSessions()       //监听session集合中的读事件，将读到的GMessage放入环形队列中
+			g.HandleSessions() //监听session集合中的读事件，将读到的GMessage放入环形队列中
 		}
 	}
 
@@ -264,7 +264,7 @@ func (g *GameRoom) Handle(session *framework.BaseSession, buf []byte) {
 func (g *GameRoom) HandleEventFromQueue() {
 	for {
 		select {
-		case <- g.die:
+		case <-g.die:
 			return
 		default:
 			e, err := g.dispatcher.GetEventQueue().Pop() // TODO 待优化。 空转导致 Pop 函数中的 error.New 经常会被调用。
@@ -388,7 +388,7 @@ func (g *GameRoom) OnEnterGame(e *event2.GMessage, s *framework.BaseSession) {
 	notify := notify2.NewGameRankListNotify(rankInfos)
 	GAME_ROOM_MANAGER.Unicast(g.ID, s.Id, notify.ToGMessageBytes())
 	//调整hero的注册位置
-	towers[towerId].HeroEnter(hero) //将hero存入tower中
+	towers[towerId].HeroEnter(hero)    //将hero存入tower中
 	go g.NotifyHeroPropMsgToHero(hero) // 向该hero发送附近的道具信息
 }
 
@@ -769,7 +769,7 @@ func (room *GameRoom) onGameOver() {
 		close(room.die)
 	}
 	atomic.AddInt32(&room.gameOver, 1) // 发通知，告诉 goroutine 游戏结束
-	time.Sleep(2 * time.Second)   //  在清理对局资源之前，等待一定时间让对局内其他任务完成
+	time.Sleep(2 * time.Second)        //  在清理对局资源之前，等待一定时间让对局内其他任务完成
 	GAME_ROOM_MANAGER.DeleteGameRoom(room.ID)
 	//runtime.GC()
 }

@@ -17,10 +17,10 @@ type RoomInfo struct {
 
 func (r RoomInfo) ToMessage() interface{} {
 	return &matchGrpc.RoomMsg{
-		Id: r.ID,
-		Status: r.Status,
-		CreateTime: r.CreateTime,
-		PlayerCount: r.PlayerCount,
+		Id:           r.ID,
+		Status:       r.Status,
+		CreateTime:   r.CreateTime,
+		PlayerCount:  r.PlayerCount,
 		HighestScore: r.HighestScore,
 	}
 }
@@ -37,10 +37,10 @@ func (r RoomInfo) FromMessage(obj interface{}) {
 func (r RoomInfo) CopyFromMessage(obj interface{}) event.Event {
 	pbMsg := obj.(*matchGrpc.RoomMsg)
 	return &RoomInfo{
-		ID: pbMsg.Id,
-		Status: pbMsg.Status,
-		CreateTime: pbMsg.CreateTime,
-		PlayerCount: pbMsg.PlayerCount,
+		ID:           pbMsg.Id,
+		Status:       pbMsg.Status,
+		CreateTime:   pbMsg.CreateTime,
+		PlayerCount:  pbMsg.PlayerCount,
 		HighestScore: pbMsg.HighestScore,
 	}
 }

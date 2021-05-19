@@ -80,7 +80,7 @@ func (manager *GameRoomManager) GetRoomList() []*GameRoom {
 	return roomList
 }
 
-func (manager *GameRoomManager) waitForEnterGame()  {
+func (manager *GameRoomManager) waitForEnterGame() {
 	log.Println("[GameRoomManager]游戏房间管理器开始轮询对等待匹配会话进行进入房间处理!")
 	buf := make([]byte, 4096)
 	for {

@@ -2,8 +2,8 @@ package collision
 
 import (
 	"container/list"
-	"fmt"
 	"dgs/configs"
+	"fmt"
 	"math"
 )
 

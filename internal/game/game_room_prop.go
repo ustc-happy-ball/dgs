@@ -35,7 +35,7 @@ func (g *GameRoom) InitNewProps() {
 func (g *GameRoom) PeriodicalInitProps() {
 	for {
 		select {
-		case <- g.die:
+		case <-g.die:
 			return
 		default:
 			g.InitNewProps()

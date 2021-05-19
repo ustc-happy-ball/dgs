@@ -1,9 +1,9 @@
 package framework
 
 import (
-	"errors"
 	"dgs/configs"
 	"dgs/tools"
+	"errors"
 	"github.com/xtaci/kcp-go"
 	"sync"
 	"time"

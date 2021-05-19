@@ -1,9 +1,9 @@
 package test
 
 import (
-	"fmt"
 	pb "dgs/api/proto"
 	"dgs/configs"
+	"fmt"
 	"github.com/golang/protobuf/proto"
 	"github.com/xtaci/kcp-go"
 	"log"

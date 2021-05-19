@@ -1,10 +1,10 @@
 package prop
 
 import (
-	"errors"
 	proto "dgs/api/proto"
 	"dgs/configs"
 	"dgs/model"
+	"errors"
 	guuid "github.com/google/uuid"
 	"math/rand"
 	"sync"
@@ -34,6 +34,8 @@ func New() *PropsManger {
 	return propsManager
 }
 func (p *PropsManger) GetPropsCount() int {
+	p.mu.Lock()
+	defer p.mu.Unlock()
 	propNum := len(p.props)
 	for _, prop := range p.props {
 		if prop.Status == configs.PropStatusDead {
@@ -73,12 +75,12 @@ func (p *PropsManger) AddProp(pr *model.Prop) error {
 	if pr == nil {
 		return ErrNilProp
 	}
+	p.mu.Lock()
+	defer p.mu.Unlock()
 	if _, ok := p.props[pr.Id]; ok {
 		return ErrPropDuplicate
 	}
 
-	p.mu.Lock()
-	defer p.mu.Unlock()
 	p.props[pr.Id] = pr
 
 	return nil
@@ -86,18 +88,20 @@ func (p *PropsManger) AddProp(pr *model.Prop) error {
 
 // RemoveProp remove Prop according to Prop id. If Prop does not exist in propManger, it will return error
 func (p *PropsManger) RemoveProp(id int32) error {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
 	if _, ok := p.props[id]; !ok {
 		return ErrPropNotExist
 	}
-
-	p.mu.Lock()
-	defer p.mu.Unlock()
 	delete(p.props, id)
 
 	return nil
 }
 
 func (p *PropsManger) AddProps(props []*model.Prop) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
 	for _, prop := range props {
 		p.props[prop.Id] = prop
 	}

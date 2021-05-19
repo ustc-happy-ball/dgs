@@ -1,8 +1,8 @@
 package tools
 
 import (
-	"fmt"
 	"dgs/configs"
+	"fmt"
 	"math"
 	"testing"
 )

@@ -1,7 +1,6 @@
 package game
 
 import (
-	"fmt"
 	pb "dgs/api/proto"
 	"dgs/configs"
 	"dgs/framework/event"
@@ -11,6 +10,7 @@ import (
 	"dgs/internal/event/request"
 	response2 "dgs/internal/event/response"
 	"dgs/model"
+	"fmt"
 	"github.com/golang/protobuf/proto"
 	"log"
 	"sync"
