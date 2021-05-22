@@ -36,7 +36,7 @@ type (
 		Check(now time.Time) bool
 	}
 
-	//Time represents a cron job
+	//Timer represents a cron job
 	Timer struct {
 		id        int64          // time id
 		fn        TimerFunc      // function that execute
@@ -53,7 +53,7 @@ func init() {
 	timerManager.timers = map[int64]*Timer{}
 }
 
-//ID returns id of current timer
+//Id returns id of current timer
 func (t *Timer) Id() int64 {
 	return t.id
 }
@@ -134,7 +134,7 @@ func cron() {
 	}
 }
 
-//NewCountTimer returns a new Timer containing a function that wil be called with a period  specified by the interval
+//NewTimer returns a new Timer containing a function that wil be called with a period  specified by the interval
 //argument. It adjusts the intervals foe slow receivers.
 //The duration must be greater than zero; if not, NewTimer will panic. Stop the timer to release associated resources
 func NewTimer(interval time.Duration, fn TimerFunc) *Timer {
