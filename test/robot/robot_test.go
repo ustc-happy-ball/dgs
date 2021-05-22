@@ -9,14 +9,12 @@ import (
 	"dgs/internal/event/notify"
 	"dgs/internal/event/request"
 	"dgs/internal/event/response"
-	"dgs/internal/game"
 	"dgs/model"
 	"dgs/tools"
 	"github.com/golang/protobuf/proto"
 	"github.com/xtaci/kcp-go"
 	"log"
 	"math/rand"
-	"testing"
 	"time"
 )
 
@@ -49,7 +47,7 @@ func (robot *Robot) accept() {
 		sess.SetACKNoDelay(true)
 		robot.session = sess
 		//开启进入世界流程
-		data := request.NewEnterGameRequest(robot.sessionId, *info.NewConnectInfo("0.0.0.0", -1), "").ToGMessageBytes()
+		data := request.NewEnterGameRequest(robot.sessionId, *info.NewConnectInfo("0.0.0.0", -1), "",0).ToGMessageBytes()
 		sess.Write(data)
 		buf := make([]byte, 4096)
 		for {
@@ -255,11 +253,11 @@ func (robot *Robot) close() {
 	close(robot.done)
 }
 
-func TestRobot(t *testing.T) {
-	// 初始化framework包组件
-	g := &game.GameStarter{}
-	g.Init()
-	// 启动机器人
-	robot := NewTestRobot()
-	robot.boot()
-}
+//func TestRobot(t *testing.T) {
+//	// 初始化framework包组件
+//	g := &game.GameStarter{}
+//	g.Init()
+//	// 启动机器人
+//	robot := NewTestRobot()
+//	robot.boot()
+//}

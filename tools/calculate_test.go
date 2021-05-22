@@ -19,6 +19,6 @@ func TestGet(t *testing.T) {
 	configs.TowerCols = int32(math.Ceil(float64((configs.MapMaxX - configs.MapMinX) / configs.TowerDiameter))) // 整个地图中有多少列Tower 从1开始
 	configs.TowerRows = int32(math.Ceil(float64((configs.MapMaxY - configs.MapMinY) / configs.TowerDiameter))) // 整个地图中有多少行Tower 从1开始
 
-	result, _ := GetOtherTowers(8)
+	result := GetOtherTowers(8)
 	fmt.Println(result)
 }
