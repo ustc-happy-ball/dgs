@@ -8,6 +8,9 @@ import (
 	"github.com/xtaci/kcp-go"
 	"log"
 	"math/rand"
+	"os"
+	"testing"
+	"time"
 )
 
 // deprecated
@@ -152,108 +155,117 @@ func receive(sess *kcp.UDPSession) {
 }
 
 // 模拟客户端登录服务器，并且接收服务器的广播信息
-//func TestGlobalPropInfoNotify(t *testing.T) {
-//	time.Sleep(time.Second)
-//	var sessionID int32 = 1234
-//	buf := make([]byte, 4096)
-//
-//	remoteServ := "127.0.0.1" + ":" + "8888"
-//	_ = remoteServ
-//	sess, err := kcp.DialWithOptions(remoteServ, nil, 0, 0)
-//	if err == nil {
-//		enterGameReq := getEnterGameReq(sessionID, &pb.ConnectMsg{
-//			Ip:   "127.0.0.1",
-//			Port: 4567,
-//		})
-//
-//		sess.Write(enterGameReq)
-//		n, err := sess.Read(buf)
-//		if err != nil {
-//			log.Printf("%v", err.Error())
-//		}
-//		msg := &pb.GMessage{}
-//		err = proto.Unmarshal(buf[:n], msg)
-//		if err != nil {
-//			log.Println("fail to unmarshal data to GMessage")
-//		}
-//
-//		log.Printf("receive %v", msg.MsgCode.String())
-//		heroID := msg.Response.EnterGameResponse.HeroId
-//		data := getEntityInfoChangeReq(sessionID, heroID)
-//
-//		go receive(sess)
-//		for {
-//			time.Sleep(200 * time.Millisecond)
-//			sess.Write(data)
-//		}
-//	} else {
-//		log.Fatal(err)
-//	}
-//}
-//
-//func TestHeroMove1(t *testing.T) {
-//	var sessionID int32 = 1234
-//	buf := make([]byte, 4096)
-//
-//	remoteServ := "127.0.0.1" + ":" + "8888"
-//	_ = remoteServ
-//	sess, err := kcp.DialWithOptions(configs.RemoteCLB, nil, 0, 0)
-//	if err == nil {
-//		enterGameReq := getEnterGameReq(sessionID, &pb.ConnectMsg{
-//			Ip:   "127.0.0.1",
-//			Port: 4567,
-//		})
-//
-//		sess.Write(enterGameReq)
-//		n, err := sess.Read(buf)
-//		if err != nil {
-//			log.Printf("%v", err.Error())
-//		}
-//		msg := &pb.GMessage{}
-//		err = proto.Unmarshal(buf[:n], msg)
-//		if err != nil {
-//			log.Println("fail to unmarshal data to GMessage")
-//		}
-//
-//		log.Printf("receive %v", msg.MsgCode.String())
-//		heroID := msg.Response.EnterGameResponse.HeroId
-//		data := getEntityInfoChangeReq(sessionID, heroID)
-//		sess.Write(data)
-//	} else {
-//		log.Fatal(err)
-//	}
-//}
-//
-//func TestHeroMove2(t *testing.T) {
-//	var sessionID int32 = 4567
-//	buf := make([]byte, 4096)
-//
-//	remoteServ := "127.0.0.1" + ":" + "8888"
-//	_ = remoteServ
-//	sess, err := kcp.DialWithOptions(configs.RemoteCLB, nil, 0, 0)
-//	if err == nil {
-//		enterGameReq := getEnterGameReq(sessionID, &pb.ConnectMsg{
-//			Ip:   "127.0.0.1",
-//			Port: 4567,
-//		})
-//
-//		sess.Write(enterGameReq)
-//		n, err := sess.Read(buf)
-//		if err != nil {
-//			log.Printf("%v", err.Error())
-//		}
-//		msg := &pb.GMessage{}
-//		err = proto.Unmarshal(buf[:n], msg)
-//		if err != nil {
-//			log.Println("fail to unmarshal data to GMessage")
-//		}
-//
-//		log.Printf("receive %v", msg.MsgCode.String())
-//		heroID := msg.Response.EnterGameResponse.HeroId
-//		fmt.Println("hedo是", heroID)
-//		data := getEntityInfoChangeReq(sessionID, heroID)
-//		sess.Write(data)
-//	} else {
-//		log.Fatal(err)
-//	}
-//}
+func TestGlobalPropInfoNotify(t *testing.T) {
+	skipCI(t)
+	time.Sleep(time.Second)
+	var sessionID int32 = 1234
+	buf := make([]byte, 4096)
+
+	remoteServ := "127.0.0.1" + ":" + "8888"
+	_ = remoteServ
+	sess, err := kcp.DialWithOptions(remoteServ, nil, 0, 0)
+	if err == nil {
+		enterGameReq := getEnterGameReq(sessionID, &pb.ConnectMsg{
+			Ip:   "127.0.0.1",
+			Port: 4567,
+		})
+
+		sess.Write(enterGameReq)
+		n, err := sess.Read(buf)
+		if err != nil {
+			log.Printf("%v", err.Error())
+		}
+		msg := &pb.GMessage{}
+		err = proto.Unmarshal(buf[:n], msg)
+		if err != nil {
+			log.Println("fail to unmarshal data to GMessage")
+		}
+
+		log.Printf("receive %v", msg.MsgCode.String())
+		heroID := msg.Response.EnterGameResponse.HeroId
+		data := getEntityInfoChangeReq(sessionID, heroID)
+
+		go receive(sess)
+		for {
+			time.Sleep(200 * time.Millisecond)
+			sess.Write(data)
+		}
+	} else {
+		log.Fatal(err)
+	}
+}
+
+func TestHeroMove1(t *testing.T) {
+	skipCI(t)
+	var sessionID int32 = 1234
+	buf := make([]byte, 4096)
+
+	remoteServ := "127.0.0.1" + ":" + "8888"
+	_ = remoteServ
+	sess, err := kcp.DialWithOptions(configs.RemoteCLB, nil, 0, 0)
+	if err == nil {
+		enterGameReq := getEnterGameReq(sessionID, &pb.ConnectMsg{
+			Ip:   "127.0.0.1",
+			Port: 4567,
+		})
+
+		sess.Write(enterGameReq)
+		n, err := sess.Read(buf)
+		if err != nil {
+			log.Printf("%v", err.Error())
+		}
+		msg := &pb.GMessage{}
+		err = proto.Unmarshal(buf[:n], msg)
+		if err != nil {
+			log.Println("fail to unmarshal data to GMessage")
+		}
+
+		log.Printf("receive %v", msg.MsgCode.String())
+		heroID := msg.Response.EnterGameResponse.HeroId
+		data := getEntityInfoChangeReq(sessionID, heroID)
+		sess.Write(data)
+	} else {
+		log.Fatal(err)
+	}
+}
+
+func TestHeroMove2(t *testing.T) {
+	skipCI(t)
+	var sessionID int32 = 4567
+	buf := make([]byte, 4096)
+
+	remoteServ := "127.0.0.1" + ":" + "8888"
+	_ = remoteServ
+	sess, err := kcp.DialWithOptions(configs.RemoteCLB, nil, 0, 0)
+	if err == nil {
+		enterGameReq := getEnterGameReq(sessionID, &pb.ConnectMsg{
+			Ip:   "127.0.0.1",
+			Port: 4567,
+		})
+
+		sess.Write(enterGameReq)
+		n, err := sess.Read(buf)
+		if err != nil {
+			log.Printf("%v", err.Error())
+		}
+		msg := &pb.GMessage{}
+		err = proto.Unmarshal(buf[:n], msg)
+		if err != nil {
+			log.Println("fail to unmarshal data to GMessage")
+		}
+
+		log.Printf("receive %v", msg.MsgCode.String())
+		heroID := msg.Response.EnterGameResponse.HeroId
+		fmt.Println("hedo是", heroID)
+		data := getEntityInfoChangeReq(sessionID, heroID)
+		sess.Write(data)
+	} else {
+		log.Fatal(err)
+	}
+}
+
+func skipCI(t *testing.T) {
+	if os.Getenv("CI") != "" {
+		t.Skip("Skipping testing in CI environment")
+	}
+}

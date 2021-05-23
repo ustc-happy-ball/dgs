@@ -10,6 +10,7 @@ var (
 
 // TestNewKcpServer create a server for test
 func TestNewKcpServer(t *testing.T) {
+	skipCI(t)
 	//b, _ := game.NewGameRoom(addr)
 	//b.Serv()
 }
