@@ -21,7 +21,7 @@ var (
 	TowerRows     int32   = int32(math.Ceil(float64((MapMaxY - MapMinY) / TowerDiameter))) // 整个地图中有多少行Tower 从1开始
 
 	// Collision-Check info
-	MaxObjectNum int32 = 25
+	MaxObjectNum int32 = 5
 	MaxLevelNum  int32 = 5
 
 	// Game info
