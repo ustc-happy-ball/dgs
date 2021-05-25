@@ -678,6 +678,9 @@ func (room *GameRoom) onCollision() {
 						if eater.SpeedDown {
 							eater.Speed /= 2
 						}
+						if eater.Speed > configs.HeroSpeedUpLimit {
+							eater.Speed = configs.HeroSpeedUpLimit
+						}
 						if eater.Speed < configs.HeroSpeedDownLimit {
 							eater.Speed = configs.HeroSpeedDownLimit
 						}
