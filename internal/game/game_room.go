@@ -3,6 +3,7 @@ package game
 import (
 	pb "dgs/api/proto"
 	"dgs/configs"
+	"dgs/db"
 	"dgs/framework"
 	"dgs/framework/event"
 	"dgs/internal/aoi"
@@ -18,6 +19,7 @@ import (
 	"fmt"
 	"github.com/golang/protobuf/proto"
 	"log"
+	"strconv"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -354,7 +356,12 @@ func (g *GameRoom) OnEnterGame(e *event2.GMessage, s *framework.BaseSession) {
 	g.RegisterConnector(s)
 	//}
 	//初始化hero加入到对局中
-	hero := model.NewHero(enterGameReq.PlayerName, s)
+	accountInfo, _ := db.AccountGetAccountInfoByPlayerId(enterGameReq.PlayerID)
+	var heroName = strconv.Itoa(int(enterGameReq.PlayerID))
+	if accountInfo != nil {
+		heroName = accountInfo.LoginName
+	}
+	hero := model.NewHero(heroName, s)
 	g.SessionHeroMap.Store(s.Id, hero)
 	atomic.AddInt32(&g.AliveHeroNum, 1)
 	// 视野处理

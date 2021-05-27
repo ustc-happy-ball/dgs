@@ -19,6 +19,7 @@ type HeroInfo struct {
 	SpeedDown     bool
 	HeroPosition  *CoordinateXYInfo
 	HeroDirection *CoordinateXYInfo
+	HeroName      string
 }
 
 func NewHeroInfo(hero *model.Hero) *HeroInfo {
@@ -33,6 +34,7 @@ func NewHeroInfo(hero *model.Hero) *HeroInfo {
 		SpeedDown:     hero.SpeedDown,
 		HeroPosition:  NewCoordinateInfo(hero.HeroPosition.X, hero.HeroPosition.Y),
 		HeroDirection: NewCoordinateInfo(hero.HeroDirection.X, hero.HeroDirection.Y),
+		HeroName:      hero.Name,
 	}
 }
 
@@ -49,6 +51,7 @@ func (h *HeroInfo) FromMessage(obj interface{}) {
 	dict := CoordinateXYInfo{}
 	dict.FromMessage(pbMsg.GetHeroDirection())
 	h.HeroDirection = &dict
+	h.HeroName = pbMsg.HeroName
 }
 
 func (h *HeroInfo) CopyFromMessage(obj interface{}) event.Event {
@@ -68,6 +71,7 @@ func (h *HeroInfo) CopyFromMessage(obj interface{}) event.Event {
 		SpeedDown:     pbMsg.SpeedDown,
 		HeroPosition:  &pos,
 		HeroDirection: &dict,
+		HeroName:      pbMsg.HeroName,
 	}
 }
 
@@ -83,6 +87,7 @@ func (h *HeroInfo) ToMessage() interface{} {
 		SpeedDown:     h.SpeedDown,
 		HeroPosition:  h.HeroPosition.ToMessage().(*pb.CoordinateXY),
 		HeroDirection: h.HeroDirection.ToMessage().(*pb.CoordinateXY),
+		HeroName:      h.HeroName,
 	}
 	switch h.Status {
 	case int32(pb.HERO_STATUS_LIVE):

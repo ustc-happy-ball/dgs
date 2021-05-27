@@ -22,6 +22,7 @@ type PlayerServiceClient interface {
 	PlayerAdd(ctx context.Context, in *PlayerAddRequest, opts ...grpc.CallOption) (*PlayerAddResponse, error)
 	PlayerUpdateHighestScoreByPlayerId(ctx context.Context, in *PlayerUpdateHighestScoreByPlayerIdRequest, opts ...grpc.CallOption) (*PlayerUpdateHighestScoreByPlayerIdResponse, error)
 	PlayerGetRankByPlayerId(ctx context.Context, in *PlayerGetRankByPlayerIdRequest, opts ...grpc.CallOption) (*PlayerGetRankByPlayerIdResponse, error)
+	PlayerGetPlayerRank(ctx context.Context, in *PlayerGetPlayerRankRequest, opts ...grpc.CallOption) (*PlayerGetPlayerRankResponse, error)
 }
 
 type playerServiceClient struct {
@@ -68,6 +69,15 @@ func (c *playerServiceClient) PlayerGetRankByPlayerId(ctx context.Context, in *P
 	return out, nil
 }
 
+func (c *playerServiceClient) PlayerGetPlayerRank(ctx context.Context, in *PlayerGetPlayerRankRequest, opts ...grpc.CallOption) (*PlayerGetPlayerRankResponse, error) {
+	out := new(PlayerGetPlayerRankResponse)
+	err := c.cc.Invoke(ctx, "/databaseGrpc.PlayerService/PlayerGetPlayerRank", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PlayerServiceServer is the server API for PlayerService service.
 // All implementations must embed UnimplementedPlayerServiceServer
 // for forward compatibility
@@ -76,6 +86,7 @@ type PlayerServiceServer interface {
 	PlayerAdd(context.Context, *PlayerAddRequest) (*PlayerAddResponse, error)
 	PlayerUpdateHighestScoreByPlayerId(context.Context, *PlayerUpdateHighestScoreByPlayerIdRequest) (*PlayerUpdateHighestScoreByPlayerIdResponse, error)
 	PlayerGetRankByPlayerId(context.Context, *PlayerGetRankByPlayerIdRequest) (*PlayerGetRankByPlayerIdResponse, error)
+	PlayerGetPlayerRank(context.Context, *PlayerGetPlayerRankRequest) (*PlayerGetPlayerRankResponse, error)
 	mustEmbedUnimplementedPlayerServiceServer()
 }
 
@@ -94,6 +105,9 @@ func (UnimplementedPlayerServiceServer) PlayerUpdateHighestScoreByPlayerId(conte
 }
 func (UnimplementedPlayerServiceServer) PlayerGetRankByPlayerId(context.Context, *PlayerGetRankByPlayerIdRequest) (*PlayerGetRankByPlayerIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PlayerGetRankByPlayerId not implemented")
+}
+func (UnimplementedPlayerServiceServer) PlayerGetPlayerRank(context.Context, *PlayerGetPlayerRankRequest) (*PlayerGetPlayerRankResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PlayerGetPlayerRank not implemented")
 }
 func (UnimplementedPlayerServiceServer) mustEmbedUnimplementedPlayerServiceServer() {}
 
@@ -180,6 +194,24 @@ func _PlayerService_PlayerGetRankByPlayerId_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PlayerService_PlayerGetPlayerRank_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PlayerGetPlayerRankRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PlayerServiceServer).PlayerGetPlayerRank(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/databaseGrpc.PlayerService/PlayerGetPlayerRank",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PlayerServiceServer).PlayerGetPlayerRank(ctx, req.(*PlayerGetPlayerRankRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PlayerService_ServiceDesc is the grpc.ServiceDesc for PlayerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -202,6 +234,10 @@ var PlayerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PlayerGetRankByPlayerId",
 			Handler:    _PlayerService_PlayerGetRankByPlayerId_Handler,
+		},
+		{
+			MethodName: "PlayerGetPlayerRank",
+			Handler:    _PlayerService_PlayerGetPlayerRank_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
