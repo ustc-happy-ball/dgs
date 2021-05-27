@@ -517,11 +517,11 @@ func (g *GameRoom) UpdateHeroPosAndStatus() {
 		distance := float64(timeElapse) * float64(hero.Speed) / 1e9
 		x, y := tools.CalXY(distance, hero.HeroDirection.X, hero.HeroDirection.Y)
 		hero.HeroPosition.X += x
-		hero.HeroPosition.X = tools.GetMax(hero.HeroPosition.X, configs.MapMinX)
-		hero.HeroPosition.X = tools.GetMin(hero.HeroPosition.X, configs.MapMaxX)
+		hero.HeroPosition.X = tools.GetMax(hero.HeroPosition.X, configs.MapMinX + hero.Size)
+		hero.HeroPosition.X = tools.GetMin(hero.HeroPosition.X, configs.MapMaxX - hero.Size)
 		hero.HeroPosition.Y += y
-		hero.HeroPosition.Y = tools.GetMax(hero.HeroPosition.Y, configs.MapMinY)
-		hero.HeroPosition.Y = tools.GetMin(hero.HeroPosition.Y, configs.MapMaxY)
+		hero.HeroPosition.Y = tools.GetMax(hero.HeroPosition.Y, configs.MapMinY + hero.Size)
+		hero.HeroPosition.Y = tools.GetMin(hero.HeroPosition.Y, configs.MapMaxY - hero.Size)
 		g.ModifyHero(hero)
 	}
 	g.onCollision()
