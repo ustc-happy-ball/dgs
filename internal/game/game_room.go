@@ -3,6 +3,7 @@ package game
 import (
 	pb "dgs/api/proto"
 	"dgs/configs"
+	"dgs/db"
 	"dgs/framework"
 	"dgs/framework/event"
 	"dgs/internal/aoi"
@@ -18,6 +19,7 @@ import (
 	"fmt"
 	"github.com/golang/protobuf/proto"
 	"log"
+	"strconv"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -354,7 +356,12 @@ func (g *GameRoom) OnEnterGame(e *event2.GMessage, s *framework.BaseSession) {
 	g.RegisterConnector(s)
 	//}
 	//初始化hero加入到对局中
-	hero := model.NewHero(enterGameReq.PlayerName, s)
+	accountInfo, _ := db.AccountGetAccountInfoByPlayerId(enterGameReq.PlayerID)
+	var heroName = strconv.Itoa(int(enterGameReq.PlayerID))
+	if accountInfo != nil {
+		heroName = accountInfo.LoginName
+	}
+	hero := model.NewHero(heroName, s)
 	g.SessionHeroMap.Store(s.Id, hero)
 	atomic.AddInt32(&g.AliveHeroNum, 1)
 	// 视野处理
@@ -517,11 +524,11 @@ func (g *GameRoom) UpdateHeroPosAndStatus() {
 		distance := float64(timeElapse) * float64(hero.Speed) / 1e9
 		x, y := tools.CalXY(distance, hero.HeroDirection.X, hero.HeroDirection.Y)
 		hero.HeroPosition.X += x
-		hero.HeroPosition.X = tools.GetMax(hero.HeroPosition.X, configs.MapMinX)
-		hero.HeroPosition.X = tools.GetMin(hero.HeroPosition.X, configs.MapMaxX)
+		hero.HeroPosition.X = tools.GetMax(hero.HeroPosition.X, configs.MapMinX + hero.Size)
+		hero.HeroPosition.X = tools.GetMin(hero.HeroPosition.X, configs.MapMaxX - hero.Size)
 		hero.HeroPosition.Y += y
-		hero.HeroPosition.Y = tools.GetMax(hero.HeroPosition.Y, configs.MapMinY)
-		hero.HeroPosition.Y = tools.GetMin(hero.HeroPosition.Y, configs.MapMaxY)
+		hero.HeroPosition.Y = tools.GetMax(hero.HeroPosition.Y, configs.MapMinY + hero.Size)
+		hero.HeroPosition.Y = tools.GetMin(hero.HeroPosition.Y, configs.MapMaxY - hero.Size)
 		g.ModifyHero(hero)
 	}
 	g.onCollision()
@@ -678,6 +685,9 @@ func (room *GameRoom) onCollision() {
 						}
 						if eater.SpeedDown {
 							eater.Speed /= 2
+						}
+						if eater.Speed > configs.HeroSpeedUpLimit {
+							eater.Speed = configs.HeroSpeedUpLimit
 						}
 						if eater.Speed < configs.HeroSpeedDownLimit {
 							eater.Speed = configs.HeroSpeedDownLimit

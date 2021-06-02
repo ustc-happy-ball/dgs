@@ -20,6 +20,8 @@ const _ = grpc.SupportPackageIsVersion7
 type AccountServiceClient interface {
 	AccountFindByPhone(ctx context.Context, in *AccountFindByPhoneRequest, opts ...grpc.CallOption) (*AccountFindByPhoneResponse, error)
 	AccountAdd(ctx context.Context, in *AccountAddRequest, opts ...grpc.CallOption) (*AccountAddResponse, error)
+	AccountFindPlayerByAccountId(ctx context.Context, in *AccountFindPlayerByAccountIdRequest, opts ...grpc.CallOption) (*AccountFindPlayerByAccountIdResponse, error)
+	AccountGetAccountByPlayerId(ctx context.Context, in *AccountGetAccountInfoByPlayerIdRequest, opts ...grpc.CallOption) (*AccountGetAccountInfoByPlayerIdResponse, error)
 }
 
 type accountServiceClient struct {
@@ -48,12 +50,32 @@ func (c *accountServiceClient) AccountAdd(ctx context.Context, in *AccountAddReq
 	return out, nil
 }
 
+func (c *accountServiceClient) AccountFindPlayerByAccountId(ctx context.Context, in *AccountFindPlayerByAccountIdRequest, opts ...grpc.CallOption) (*AccountFindPlayerByAccountIdResponse, error) {
+	out := new(AccountFindPlayerByAccountIdResponse)
+	err := c.cc.Invoke(ctx, "/databaseGrpc.AccountService/AccountFindPlayerByAccountId", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountServiceClient) AccountGetAccountByPlayerId(ctx context.Context, in *AccountGetAccountInfoByPlayerIdRequest, opts ...grpc.CallOption) (*AccountGetAccountInfoByPlayerIdResponse, error) {
+	out := new(AccountGetAccountInfoByPlayerIdResponse)
+	err := c.cc.Invoke(ctx, "/databaseGrpc.AccountService/AccountGetAccountByPlayerId", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AccountServiceServer is the server API for AccountService service.
 // All implementations must embed UnimplementedAccountServiceServer
 // for forward compatibility
 type AccountServiceServer interface {
 	AccountFindByPhone(context.Context, *AccountFindByPhoneRequest) (*AccountFindByPhoneResponse, error)
 	AccountAdd(context.Context, *AccountAddRequest) (*AccountAddResponse, error)
+	AccountFindPlayerByAccountId(context.Context, *AccountFindPlayerByAccountIdRequest) (*AccountFindPlayerByAccountIdResponse, error)
+	AccountGetAccountByPlayerId(context.Context, *AccountGetAccountInfoByPlayerIdRequest) (*AccountGetAccountInfoByPlayerIdResponse, error)
 	mustEmbedUnimplementedAccountServiceServer()
 }
 
@@ -66,6 +88,12 @@ func (UnimplementedAccountServiceServer) AccountFindByPhone(context.Context, *Ac
 }
 func (UnimplementedAccountServiceServer) AccountAdd(context.Context, *AccountAddRequest) (*AccountAddResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AccountAdd not implemented")
+}
+func (UnimplementedAccountServiceServer) AccountFindPlayerByAccountId(context.Context, *AccountFindPlayerByAccountIdRequest) (*AccountFindPlayerByAccountIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AccountFindPlayerByAccountId not implemented")
+}
+func (UnimplementedAccountServiceServer) AccountGetAccountByPlayerId(context.Context, *AccountGetAccountInfoByPlayerIdRequest) (*AccountGetAccountInfoByPlayerIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AccountGetAccountByPlayerId not implemented")
 }
 func (UnimplementedAccountServiceServer) mustEmbedUnimplementedAccountServiceServer() {}
 
@@ -116,6 +144,42 @@ func _AccountService_AccountAdd_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AccountService_AccountFindPlayerByAccountId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AccountFindPlayerByAccountIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServiceServer).AccountFindPlayerByAccountId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/databaseGrpc.AccountService/AccountFindPlayerByAccountId",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServiceServer).AccountFindPlayerByAccountId(ctx, req.(*AccountFindPlayerByAccountIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AccountService_AccountGetAccountByPlayerId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AccountGetAccountInfoByPlayerIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServiceServer).AccountGetAccountByPlayerId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/databaseGrpc.AccountService/AccountGetAccountByPlayerId",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServiceServer).AccountGetAccountByPlayerId(ctx, req.(*AccountGetAccountInfoByPlayerIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AccountService_ServiceDesc is the grpc.ServiceDesc for AccountService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -130,6 +194,14 @@ var AccountService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AccountAdd",
 			Handler:    _AccountService_AccountAdd_Handler,
+		},
+		{
+			MethodName: "AccountFindPlayerByAccountId",
+			Handler:    _AccountService_AccountFindPlayerByAccountId_Handler,
+		},
+		{
+			MethodName: "AccountGetAccountByPlayerId",
+			Handler:    _AccountService_AccountGetAccountByPlayerId_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

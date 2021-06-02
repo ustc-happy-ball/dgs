@@ -2,9 +2,12 @@ syntax = "proto3";
 option go_package = ".;databaseGrpc";
 package databaseGrpc;
 
+import "player.proto";
+
 service AccountService {
   rpc AccountFindByPhone(AccountFindByPhoneRequest) returns (AccountFindByPhoneResponse) {}
   rpc AccountAdd(AccountAddRequest) returns (AccountAddResponse) {}
+  rpc AccountGetAccountByPlayerId(AccountGetAccountInfoByPlayerIdRequest) returns (AccountGetAccountInfoByPlayerIdResponse) {}
 }
 
 message AccountFindByPhoneRequest {
@@ -22,6 +25,15 @@ message AccountAddRequest {
 message AccountAddResponse {
   string objectId = 1;
 }
+
+message AccountGetAccountInfoByPlayerIdRequest {
+  int32 PlayerId = 1;
+}
+
+message AccountGetAccountInfoByPlayerIdResponse {
+  Account accountInfo = 1;
+}
+
 
 message Account {
   string objectId = 1; //objectId

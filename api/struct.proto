@@ -14,6 +14,7 @@ message HeroMsg {
   bool speedUp = 8; // 是否处于加速状态
   bool speedDown = 9; // 是否处于减速状态
   int32 heroScore = 10; //玩家分数
+  string heroName = 11; //玩家姓名
 }
 
 message HeroRankMsg {

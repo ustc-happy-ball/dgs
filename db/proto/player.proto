@@ -7,6 +7,7 @@ service PlayerService {
   rpc PlayerAdd(PlayerAddRequest) returns (PlayerAddResponse) {}
   rpc PlayerUpdateHighestScoreByPlayerId(PlayerUpdateHighestScoreByPlayerIdRequest) returns (PlayerUpdateHighestScoreByPlayerIdResponse) {}
   rpc PlayerGetRankByPlayerId(PlayerGetRankByPlayerIdRequest) returns (PlayerGetRankByPlayerIdResponse) {}
+  rpc PlayerGetPlayerRank(PlayerGetPlayerRankRequest) returns (PlayerGetPlayerRankResponse) {}
 }
 
 message PlayerFindByPlayerIdRequest {
@@ -23,6 +24,11 @@ message PlayerAddRequest {
 
 message PlayerAddResponse {
 
+}
+
+message PlayerGetPlayerRankRequest {}
+message PlayerGetPlayerRankResponse {
+  repeated Player players = 1;
 }
 
 message PlayerUpdateHighestScoreByPlayerIdRequest {
