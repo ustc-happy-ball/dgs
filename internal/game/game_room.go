@@ -558,8 +558,9 @@ func (room *GameRoom) onCollision() {
 		if hero.Status == int32(pb.HERO_STATUS_DEAD) {
 			continue
 		}
+		// 拉取英雄邻近碰撞候选集
 		heroObj := collision.NewRectangleByObj(hero.ID, int32(pb.ENTITY_TYPE_HERO_TYPE), hero.Size, hero.HeroPosition.X, hero.HeroPosition.Y)
-		collisionCandidates := room.quadTree.GetObjsInSameDistrict(heroObj)
+		collisionCandidates := room.fetchHeroNearbyObjs(hero)
 		for candidateIndex := 0; candidateIndex < len(collisionCandidates); candidateIndex++ {
 			// 如果玩家状态为阵亡，则跳过该玩家检测流程
 			if hero.Status == int32(pb.HERO_STATUS_DEAD) {
@@ -754,6 +755,47 @@ func (room *GameRoom) onCollision() {
 			}
 		}
 	}
+}
+
+func (room *GameRoom) fetchHeroNearbyObjs(hero *model.Hero) []*collision.Rectangle {
+	// 拉取英雄所属四叉树节点邻近碰撞候选集
+	heroObj := collision.NewRectangleByObj(hero.ID, int32(pb.ENTITY_TYPE_HERO_TYPE), hero.Size, hero.HeroPosition.X, hero.HeroPosition.Y)
+	collisionCandidates := room.quadTree.GetObjsInSameDistrict(heroObj)
+	tree := room.quadTree.GetObjsTree(heroObj)
+	// 拉取英雄覆盖四叉树节点邻近碰撞候选集(四个方向上的极值点)
+	if hero.HeroPosition.Y + hero.Size < configs.MapMaxY {
+		heroObjUp := collision.NewRectangleByObj(hero.ID, int32(pb.ENTITY_TYPE_HERO_TYPE), hero.Size, hero.HeroPosition.X, hero.HeroPosition.Y+hero.Size)
+		upTree := room.quadTree.GetObjsTree(heroObjUp)
+		if tree.GetName() != upTree.GetName() {
+			upCandidates := room.quadTree.GetObjsInSameDistrict(heroObjUp)
+			collisionCandidates = append(collisionCandidates, upCandidates...)
+		}
+	}
+	if hero.HeroPosition.Y - hero.Size > configs.MapMinY {
+		heroObjDown := collision.NewRectangleByObj(hero.ID, int32(pb.ENTITY_TYPE_HERO_TYPE), hero.Size, hero.HeroPosition.X, hero.HeroPosition.Y-hero.Size)
+		downTree := room.quadTree.GetObjsTree(heroObjDown)
+		if tree.GetName() != downTree.GetName() {
+			downCandidates := room.quadTree.GetObjsInSameDistrict(heroObjDown)
+			collisionCandidates = append(collisionCandidates, downCandidates...)
+		}
+	}
+	if hero.HeroPosition.X - hero.Size > configs.MapMinX {
+		heroObjLeft := collision.NewRectangleByObj(hero.ID, int32(pb.ENTITY_TYPE_HERO_TYPE), hero.Size, hero.HeroPosition.X-hero.Size, hero.HeroPosition.Y)
+		leftTree := room.quadTree.GetObjsTree(heroObjLeft)
+		if tree.GetName() != leftTree.GetName() {
+			leftCandidates := room.quadTree.GetObjsInSameDistrict(heroObjLeft)
+			collisionCandidates = append(collisionCandidates, leftCandidates...)
+		}
+	}
+	if hero.HeroPosition.X + hero.Size < configs.MapMaxX {
+		heroObjRight := collision.NewRectangleByObj(hero.ID, int32(pb.ENTITY_TYPE_HERO_TYPE), hero.Size, hero.HeroPosition.X+hero.Size, hero.HeroPosition.Y)
+		rightTree := room.quadTree.GetObjsTree(heroObjRight)
+		if tree.GetName() != rightTree.GetName() {
+			rightCandidates := room.quadTree.GetObjsInSameDistrict(heroObjRight)
+			collisionCandidates = append(collisionCandidates, rightCandidates...)
+		}
+	}
+	return collisionCandidates
 }
 
 // TODO bug: onCollision 冲重复调用 onGameOver

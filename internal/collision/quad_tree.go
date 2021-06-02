@@ -54,6 +54,10 @@ func (tree *QuadTree) Split() {
 	tree.childs = append(tree.childs, child3)
 }
 
+func (tree *QuadTree) GetName() string {
+	return tree.name
+}
+
 // @title    GetDistrictIndex
 // @description   查询物体所在四叉树区域编号（0：第一象限 1：第二象限 2：第三象限 3：第四象限）
 // @param     obj        *Rectangle         "物体"
@@ -158,6 +162,18 @@ func (tree *QuadTree) GetObjsInSameDistrict(obj *Rectangle) []*Rectangle {
 		}
 	}
 	return objs
+}
+
+// @title    GetObjsTree
+// @description   查找四叉树中目标物体的所属树节点
+// @param     obj        *Rectangle         "目标物体"
+// @return    objs        *QuadTree     "目标物体所属树节点"
+func (tree *QuadTree) GetObjsTree(obj *Rectangle) *QuadTree {
+	index := tree.GetDistrictIndex(obj)
+	if -1 != index && len(tree.childs) > 0 {
+		return tree.childs[index].GetObjsTree(obj)
+	}
+	return tree
 }
 
 // @title    Clear
